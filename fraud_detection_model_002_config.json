@@ -1,0 +1,24 @@
+{
+  "feature_columns": [
+    "amount_to_limit",
+    "amount_log",
+    "is_large_amount",
+    "hour_bin",
+    "hour_sin",
+    "hour_cos",
+    "day_sin",
+    "day_cos",
+    "merchant_distance_km",
+    "distance_log",
+    "is_night",
+    "is_high_risk_time",
+    "txn_ATM",
+    "txn_ONLINE",
+    "txn_POS"
+  ],
+  "input_dim": 15,
+  "threshold": 0.0971438553527514,
+  "model_summary": "None",
+  "training_date": "2025-12-04 21:32:35",
+  "version": "002"
+}

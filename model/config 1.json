@@ -1,0 +1,18 @@
+{
+    "threshold": 0.11427629526292507,
+    "DIST_LIMIT_KM": 120,
+    "ae_features": [
+        "amt",
+        "age",
+        "gender",
+        "categ_encoder",
+        "hour",
+        "day",
+        "month",
+        "weekday",
+        "lat",
+        "long",
+        "merch_lat",
+        "merch_long"
+    ]
+}
