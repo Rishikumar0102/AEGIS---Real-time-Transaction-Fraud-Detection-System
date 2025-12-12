@@ -59,47 +59,47 @@ try:
     # Try loading model with 002 suffix
     try:
         model = keras.models.load_model("fraud_detection_model_002.keras")
-        print("✅ Model loaded: fraud_detection_model_002.keras")
+        print("Model loaded: fraud_detection_model_002.keras")
     except:
         try:
             model = keras.models.load_model("fraud_detection_model_002.h5")
-            print("✅ Model loaded: fraud_detection_model_002.h5")
+            print(" Model loaded: fraud_detection_model_002.h5")
         except:
             try:
-                model = keras.models.load_model("fraud_detection_model.keras")
-                print("✅ Model loaded: fraud_detection_model.keras")
+                model = keras.models.load_model("fraud_detection_model002.keras")
+                print(" Model loaded: fraud_detection_model.keras")
             except:
                 try:
-                    model = keras.models.load_model("fraud_detection_model.h5")
-                    print("✅ Model loaded: fraud_detection_model.h5")
+                    model = keras.models.load_model("fraud_detection_model002.h5")
+                    print(" Model loaded: fraud_detection_model.h5")
                 except Exception as e:
-                    print(f"❌ Model loading failed: {e}")
+                    print("loading failed: {e}")
                     
 except Exception as e:
-    print(f"❌ TensorFlow error: {e}")
+    print(f"TensorFlow error: {e}")
 
 # Load scaler
 try:
     scaler = joblib.load("fraud_detection_model_002_scaler.pkl")
-    print("✅ Scaler loaded")
+    print("Scaler loaded")
 except:
     try:
         scaler = joblib.load("fraud_detection_model_scaler.pkl")
-        print("✅ Scaler loaded (fallback)")
+        print("Scaler loaded (fallback)")
     except:
-        print("❌ Scaler not found")
+        print("Scaler not found")
         scaler = None
 
 # Load threshold
 try:
     threshold = joblib.load("fraud_detection_model_002_threshold.pkl")
-    print(f"✅ Threshold loaded: {threshold:.4f}")
+    print(f"Threshold loaded: {threshold:.4f}")
 except:
     try:
         threshold = joblib.load("fraud_detection_model_threshold.pkl")
-        print(f"✅ Threshold loaded (fallback): {threshold:.4f}")
+        print(f"Threshold loaded (fallback): {threshold:.4f}")
     except:
-        print("❌ Threshold not found, using 0.5")
+        print("Threshold not found, using 0.5")
         threshold = 0.5
 
 # Load config
@@ -107,15 +107,15 @@ try:
     with open("fraud_detection_model_002_config.json", "r") as f:
         config = json.load(f)
     feature_columns = config.get('feature_columns', [])
-    print(f"✅ Config loaded, {len(feature_columns)} features")
+    print(f"Config loaded, {len(feature_columns)} features")
 except:
     try:
         with open("fraud_detection_model_config.json", "r") as f:
             config = json.load(f)
         feature_columns = config.get('feature_columns', [])
-        print(f"✅ Config loaded (fallback), {len(feature_columns)} features")
+        print(f"Config loaded (fallback), {len(feature_columns)} features")
     except:
-        print("❌ Config not found")
+        print("Config not found")
         feature_columns = []
 
 # ========== FEATURE PREPARATION ==========
@@ -193,7 +193,6 @@ def prepare_features(transaction: TransactionRequest):
     
     return X
 
-# In fastapi_fraud.py, update the rule_based_detection function:
 
 def rule_based_detection(transaction: TransactionRequest):
     """Enhanced rule-based fraud detection with GPS analysis"""
@@ -262,7 +261,7 @@ def rule_based_detection(transaction: TransactionRequest):
                     reasons.append(f"Long distance: {distance_km:.1f}km")
                     
         except Exception as e:
-            print(f"⚠️ Travel analysis error: {e}")
+            print(f"Travel analysis error: {e}")
     
     # Multiple transactions in short time
     if hasattr(transaction, 'time_since_last_hours') and transaction.time_since_last_hours < 0.1:
@@ -283,7 +282,7 @@ async def predict(transaction: TransactionRequest):
     """Predict if transaction is fraudulent"""
     
     try:
-        print(f"📥 Processing: {transaction.transaction_id}")
+        print(f"Processing: {transaction.transaction_id}")
         
         # Rule-based detection
         rule_score, rule_reasons = rule_based_detection(transaction)
@@ -309,7 +308,7 @@ async def predict(transaction: TransactionRequest):
                     model_score = 0.7
                 
             except Exception as e:
-                print(f"⚠️ Model error: {e}")
+                print(f"Model error: {e}")
         
         # Combine scores
         if model is not None:
@@ -338,7 +337,7 @@ async def predict(transaction: TransactionRequest):
         )
         
     except Exception as e:
-        print(f"❌ Prediction error: {e}")
+        print(f"Prediction error: {e}")
         return FraudPrediction(
             is_fraud=False,
             fraud_score=0.0,
@@ -357,9 +356,9 @@ def root():
 if __name__ == "__main__":
     import uvicorn
     print("\n" + "="*50)
-    print("🚀 Fraud Detection API Starting...")
-    print(f"📊 Model loaded: {model is not None}")
-    print(f"📈 Scaler loaded: {scaler is not None}")
-    print(f"🎯 Threshold: {threshold}")
+    print(" Fraud Detection API Starting...")
+    print(f" Model loaded: {model is not None}")
+    print(f" Scaler loaded: {scaler is not None}")
+    print(f" Threshold: {threshold}")
     print("="*50 + "\n")
     uvicorn.run(app, host="0.0.0.0", port=8001)

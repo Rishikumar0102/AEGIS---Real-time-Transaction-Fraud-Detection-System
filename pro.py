@@ -87,11 +87,11 @@ def send_transaction(transaction):
     """Send transaction to Kafka topic."""
     producer.produce(TOPIC, key=transaction["cc_number"], value=json.dumps(transaction))
     producer.flush()
-    print(f"📤 Sent → ID: {transaction['transaction_id'][-6:]} | "
-          f"📍 {transaction['card_lat']:.4f}°N, {transaction['card_lon']:.4f}°E | "
-          f"💳 {transaction['cc_number'][-4:]} | "
-          f"💰 ₹{transaction['amount']:,.2f} | "
-          f"🏙️ {transaction['city']}")
+    print(f" Sent → ID: {transaction['transaction_id'][-6:]} | "
+          f" {transaction['card_lat']:.4f}°N, {transaction['card_lon']:.4f}°E | "
+          f" {transaction['cc_number'][-4:]} | "
+          f" ₹{transaction['amount']:,.2f} | "
+          f" {transaction['city']}")
 
 
 def generate_random_transaction():
@@ -211,32 +211,32 @@ def manual_input_transaction():
     
     # Transaction details
     try:
-        amount = float(input("💰 Amount (₹): "))
+        amount = float(input(" Amount (₹): "))
     except:
         amount = round(random.uniform(100, 5000), 2)
-        print(f"⚠️  Using random amount: ₹{amount:,.2f}")
+        print(f"  Using random amount: ₹{amount:,.2f}")
     
     txn_type = input("💼 Transaction Type (ATM/POS/ONLINE): ").upper().strip()
     if txn_type not in ['ATM', 'POS', 'ONLINE']:
         txn_type = random.choice(['ATM', 'POS', 'ONLINE'])
-        print(f"⚠️  Using random type: {txn_type}")
+        print(f"  Using random type: {txn_type}")
     
     # GPS Coordinates
-    print("\n📍 ENTER GPS COORDINATES")
+    print("\n ENTER GPS COORDINATES")
     print("   Example: Delhi - 28.6139, 77.2090")
     print("           Mumbai - 19.0760, 72.8777")
     print("           Chennai - 13.0827, 80.2707")
     
     while True:
         try:
-            lat_input = input("🌐 Latitude (e.g., 28.6139): ").strip()
-            lon_input = input("🌐 Longitude (e.g., 77.2090): ").strip()
+            lat_input = input(" Latitude (e.g., 28.6139): ").strip()
+            lon_input = input(" Longitude (e.g., 77.2090): ").strip()
             
             # If empty, use random Indian coordinates
             if not lat_input or not lon_input:
                 lat = random.uniform(INDIA_BOUNDS["min_lat"], INDIA_BOUNDS["max_lat"])
                 lon = random.uniform(INDIA_BOUNDS["min_lon"], INDIA_BOUNDS["max_lon"])
-                print(f"⚠️  Using random coordinates: {lat:.4f}, {lon:.4f}")
+                print(f"  Using random coordinates: {lat:.4f}, {lon:.4f}")
             else:
                 lat = float(lat_input)
                 lon = float(lon_input)
@@ -244,16 +244,16 @@ def manual_input_transaction():
             # Validate coordinates are within India
             if not (INDIA_BOUNDS["min_lat"] <= lat <= INDIA_BOUNDS["max_lat"] and 
                     INDIA_BOUNDS["min_lon"] <= lon <= INDIA_BOUNDS["max_lon"]):
-                print(f"❌ Coordinates outside India bounds!")
+                print(f" Coordinates outside India bounds!")
                 print(f"   Must be: Lat {INDIA_BOUNDS['min_lat']} to {INDIA_BOUNDS['max_lat']}")
                 print(f"            Lon {INDIA_BOUNDS['min_lon']} to {INDIA_BOUNDS['max_lon']}")
                 continue
             
             break
         except ValueError:
-            print("❌ Invalid coordinates! Please enter numbers only.")
+            print(" Invalid coordinates! Please enter numbers only.")
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f" Error: {e}")
     
     # Find city and generate merchant location
     city = get_closest_city(lat, lon)
@@ -261,13 +261,13 @@ def manual_input_transaction():
     merchant_lon = lon + random.uniform(-0.005, 0.005)
     
     # Merchant name
-    merchant = input("🏪 Merchant Name (press Enter for random): ").strip()
+    merchant = input(" Merchant Name ( Enter for random): ").strip()
     if not merchant:
         merchant = random.choice(['Amazon', 'Flipkart', 'Swiggy', 'DMart', 'Reliance', 'LocalStore'])
     
     # Credit limit (default or input)
     try:
-        credit_limit = float(input("📊 Credit Limit (₹, press Enter for 50000): ") or "50000")
+        credit_limit = float(input("Credit Limit (₹, press Enter for 50000): ") or "50000")
     except:
         credit_limit = 50000
     
@@ -318,20 +318,16 @@ def main_menu():
         print("\n" + "="*60)
         print("           FRAUD DETECTION - TRANSACTION PRODUCER")
         print("="*60)
-        print("1. 🚀 Continuous Streaming Mode")
+        print("1.  Continuous Streaming Mode")
         print("   • Generates transactions every 3 seconds")
-        print("   • Uses GPS coordinates for all transactions")
-        print("   • 5% fraud rate with random India locations")
+        print("   • Uses all the  GPS coordinates for all transactions")   
         print()
-        print("2. 📝 Manual Entry Mode")
+        print("2.  Manual Entry Mode")
         print("   • Enter transaction details manually")
         print("   • Input latitude/longitude coordinates")
         print("   • Supports random coordinates if needed")
         print()
-        print("3. 📍 View Coordinate Examples")
-        print("   • Show GPS coordinates for major cities")
-        print()
-        print("4. 🛑 Exit Producer")
+        print("4. Exit Producer")
         print("="*60)
         
         choice = input("\nSelect option (1-4): ").strip()
@@ -354,12 +350,12 @@ def main_menu():
                     
                     # Show summary every 10 transactions
                     if counter % 10 == 0:
-                        print(f"\n📊 Streamed {counter} transactions... (Ctrl+C to stop)\n")
+                        print(f"\n Streamed {counter} transactions... (Ctrl+C to stop)\n")
                     
                     time.sleep(3)
             except KeyboardInterrupt:
-                print("\n\n⏹️  Streaming stopped by user")
-                print(f"📈 Total transactions streamed: {counter}")
+                print("\n\n  Streaming stopped by user")
+                print(f"Total transactions streamed: {counter}")
                 continue
         
         elif choice == "2":
@@ -378,9 +374,9 @@ def main_menu():
             confirm = input("\nSend this transaction? (y/n): ").lower()
             if confirm == 'y':
                 send_transaction(transaction)
-                print("✅ Transaction sent successfully!")
+                print(" Transaction sent successfully!")
             else:
-                print("❌ Transaction cancelled")
+                print(" Transaction cancelled")
         
         elif choice == "3":
             show_coordinate_examples()
@@ -399,7 +395,7 @@ if __name__ == "__main__":
     print("        GPS COORDINATES EDITION")
     print("✨" * 30)
     
-    # Display some initial info
+    
     print(f"\n📊 Loaded {len(credit_cards)} credit card profiles")
     print(f"📍 Using {len(CITIES)} Indian cities as references")
     print(f"🌏 India bounds: {INDIA_BOUNDS['min_lat']}° to {INDIA_BOUNDS['max_lat']}°N, "

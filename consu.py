@@ -64,10 +64,10 @@ def log_sms_alert(transaction_id, fraud_score, status="sent", alert_type="SMS"):
                 status
             ])
         
-        print(f"   📝 Alert logged: {transaction_id} - {status}")
+        print(f"    Alert logged: {transaction_id} - {status}")
         return True
     except Exception as e:
-        print(f"   ❌ Alert logging failed: {e}")
+        print(f"    Alert logging failed: {e}")
         return False
 # ====================================================
 
@@ -147,14 +147,14 @@ def save_to_db(tx, prediction):
                 prediction.get("reason", "Unknown")
             ))
             conn.commit()
-            print(f"💾 Saved to DB: {tx['transaction_id']}")
+            print(f" Saved to DB: {tx['transaction_id']}")
         else:
-            print(f"⏭️  Already in DB: {tx['transaction_id']}")
+            print(f" Already in DB: {tx['transaction_id']}")
             
         conn.close()
 
     except Exception as e:
-        print(f"❌ Database Error: {e}")
+        print(f" Database Error: {e}")
 
 def get_last_transaction(card_number):
     """Get last transaction GPS coordinates and timestamp"""
@@ -227,12 +227,12 @@ def add_travel_info(tx):
 print("\n" + "="*60)
 print("   FRAUD DETECTION CONSUMER - GPS EDITION")
 print("="*60)
-print("📡 Listening for transactions...")
-print("📍 Now with GPS coordinate analysis")
-print("🚗 Travel speed calculation enabled")
+print(" Listening for transactions...")
+print(" Now with GPS coordinate analysis")
+print(" Travel speed calculation enabled")
 # ========== ADD THIS LINE ==========
-print("🔔 Real-time alerts enabled" if ALERT_SERVICE_AVAILABLE else "⚠️ Alerts disabled - service not found")
-print(f"📝 SMS alert logging: ENABLED")
+print(" Real-time alerts enabled" if ALERT_SERVICE_AVAILABLE else "⚠️ Alerts disabled - service not found")
+print(f" SMS alert logging: ENABLED")
 # ===================================
 print("-"*60)
 
@@ -248,27 +248,27 @@ try:
         if msg is None:
             continue
         if msg.error():
-            print(f"❌ Consumer error: {msg.error()}")
+            print(f" Consumer error: {msg.error()}")
             continue
 
         # Parse transaction
         tx = json.loads(msg.value().decode('utf-8'))
         transaction_count += 1
         
-        print(f"\n📥 Received Transaction #{transaction_count}")
-        print(f"   ID: {tx['transaction_id'][-6:]}")
-        print(f"   Card: {tx['cc_number'][-4:]} | User: {tx['user_id']}")
-        print(f"   📍 {tx['card_lat']:.4f}, {tx['card_lon']:.4f} | 🏙️ {tx.get('city', 'Unknown')}")
-        print(f"   💰 ₹{tx['amount']:,.2f} | 🏪 {tx.get('merchant_name', 'Unknown')}")
+        print(f"\n Received Transaction #{transaction_count}")
+        print(f"ID: {tx['transaction_id'][-6:]}")
+        print(f"Card: {tx['cc_number'][-4:]} | User: {tx['user_id']}")
+        print(f"{tx['card_lat']:.4f}, {tx['card_lon']:.4f} |  {tx.get('city', 'Unknown')}")
+        print(f"{tx['amount']:,.2f} |  {tx.get('merchant_name', 'Unknown')}")
         
         # Add travel analysis
         tx_with_travel = add_travel_info(tx)
         
         # Show travel info if available
         if "distance_from_last_km" in tx_with_travel and tx_with_travel["distance_from_last_km"] > 0:
-            print(f"   🚗 Distance from last: {tx_with_travel['distance_from_last_km']}km")
-            print(f"   ⏱️  Time since last: {tx_with_travel['time_since_last_hours']:.1f}h")
-            print(f"   🚀 Travel speed: {tx_with_travel['travel_speed_kmh']:.1f}km/h")
+            print(f"Distance from last: {tx_with_travel['distance_from_last_km']}km")
+            print(f"Time since last: {tx_with_travel['time_since_last_hours']:.1f}h")
+            print(f"Travel speed: {tx_with_travel['travel_speed_kmh']:.1f}km/h")
         
         # Call FastAPI for prediction
         try:
@@ -278,13 +278,13 @@ try:
             if prediction.get("is_fraud", False):
                 fraud_count += 1
                 fraud_score = prediction.get('fraud_score', 0)
-                print(f"   🚨 FRAUD DETECTED: {prediction.get('reason', 'Unknown')}")
-                print(f"   🔴 Fraud Score: {fraud_score:.2%}")
+                print(f" FRAUD DETECTED: {prediction.get('reason', 'Unknown')}")
+                print(f" Fraud Score: {fraud_score:.2%}")
                 
                 # ========== UPDATED ALERT TRIGGERING CODE ==========
                 # Check if fraud and trigger alerts
                 if ALERT_SERVICE_AVAILABLE and fraud_score > ALERT_THRESHOLD:
-                    print(f"   🔔 Triggering SMS alert (Score: {fraud_score:.1%})")
+                    print(f" Triggering SMS alert (Score: {fraud_score:.1%})")
                     
                     try:
                         alert_result = alert_service.trigger_alerts(tx, prediction)
@@ -300,22 +300,22 @@ try:
                             # ============================================
                             
                     except Exception as alert_error:
-                        print(f"   ❌ Alert error: {alert_error}")
+                        print(f"Alert error: {alert_error}")
                         # Log failed alert
                         log_sms_alert(tx['transaction_id'], fraud_score, "failed", "SMS")
                 else:
                     if fraud_score > ALERT_THRESHOLD:
-                        # High fraud but no alert service available
-                        print(f"   ⚠️ High fraud detected ({fraud_score:.1%}) but alert service unavailable")
+                       
+                        print(f" High fraud detected ({fraud_score:.1%}) but alert service unavailable")
                         log_sms_alert(tx['transaction_id'], fraud_score, "service_unavailable", "SMS")
                 # =====================================================
                 
             else:
-                print(f"   ✅ Normal Transaction")
-                print(f"   🟢 Fraud Score: {prediction.get('fraud_score', 0):.2%}")
+                print(f" Normal Transaction")
+                print(f"  Fraud Score: {prediction.get('fraud_score', 0):.2%}")
                 
         except Exception as e:
-            print(f"❌ API Error: {e}")
+            print(f"API Error: {e}")
             prediction = {
                 "is_fraud": False, 
                 "reason": "API ERROR",
@@ -330,14 +330,14 @@ try:
         print("-"*60)
 
 except KeyboardInterrupt:
-    print("\n\n🛑 Consumer stopped by user")
-    print(f"📈 Final Stats:")
-    print(f"   • Transactions processed: {transaction_count}")
-    print(f"   • Fraud detected: {fraud_count}")
-    print(f"   • SMS alerts sent: {sms_alerts_sent}")
+    print("\n\n Consumer stopped by user")
+    print(f"Final Stats:")
+    print(f" Transactions processed: {transaction_count}")
+    print(f" Fraud detected: {fraud_count}")
+    print(f" SMS alerts sent: {sms_alerts_sent}")
 except Exception as e:
-    print(f"❌ Unexpected error: {e}")
+    print(f"Unexpected error: {e}")
 finally:
     # Clean up
     consumer.close()
-    print("✅ Consumer closed cleanly")
+    print("Consumer closed cleanly")
